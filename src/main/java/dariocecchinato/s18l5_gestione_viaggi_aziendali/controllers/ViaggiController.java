@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.stream.Collectors;
 
 @RestController
@@ -36,5 +37,11 @@ public class ViaggiController {
                                        @RequestParam(defaultValue = "10")int size,
                                        @RequestParam(defaultValue = "destinazione")String sortby){
         return this.viaggiService.findAll(page, size, sortby);
+    }
+
+    @GetMapping("/{destinazione}/{dataViaggio}")
+    public Viaggio findByDestinazioneAndDataViaggio (@PathVariable String destinazione, @PathVariable String dataViaggio){
+        LocalDate data = LocalDate.parse(dataViaggio);
+        return  viaggiService.findByDestinationAndDate(destinazione,data);
     }
 }
