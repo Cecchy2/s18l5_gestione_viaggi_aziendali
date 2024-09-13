@@ -2,6 +2,7 @@ package dariocecchinato.s18l5_gestione_viaggi_aziendali.entities;
 
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.enums.Stato_Prenotazione;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +17,7 @@ import java.util.UUID;
 public class Viaggio {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Setter(AccessLevel.NONE)
     private UUID id;
     private  String destinazione;
     private LocalDate dataViaggio;
