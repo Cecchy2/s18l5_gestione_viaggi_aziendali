@@ -18,13 +18,13 @@ public class Viaggio {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private  String destinazione;
-    private LocalDate data;
+    private LocalDate dataViaggio;
     @Enumerated(EnumType.STRING)
-    private Stato_Prenotazione stato_prenotazione;
+    private Stato_Prenotazione statoPrenotazione;
 
-    public Viaggio(String destinazione, LocalDate data, Stato_Prenotazione stato_prenotazione) {
+    public Viaggio(String destinazione, LocalDate dataViaggio, Stato_Prenotazione statoPrenotazione) {
         this.destinazione = destinazione;
-        this.data = data;
-        this.stato_prenotazione = stato_prenotazione;
+        this.dataViaggio = dataViaggio;
+        this.statoPrenotazione = statoPrenotazione;
     }
 }
