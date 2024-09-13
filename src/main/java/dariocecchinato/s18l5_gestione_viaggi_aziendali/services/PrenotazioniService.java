@@ -66,6 +66,9 @@ public class PrenotazioniService {
         Prenotazione found = this.prenotazioniRepository.findById(prenotazioneId).orElseThrow(()-> new NotFoundException(prenotazioneId));
         this.prenotazioniRepository.delete(found);
     }
+    public boolean esistePrenotazionePerGiornoEDipendente(UUID dipendenteId, LocalDate dataViaggio, UUID prenotazioneId) {
+        return prenotazioniRepository.existsByDipendenteIdAndViaggioDataViaggioAndIdNot(dipendenteId, dataViaggio, prenotazioneId);
+    }
 
 
 }

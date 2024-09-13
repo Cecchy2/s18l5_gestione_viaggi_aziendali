@@ -58,6 +58,9 @@ public class PrenotazioniController {
     public Prenotazione getByIdAndUpdate(@PathVariable UUID prenotazioneId, @RequestBody @Validated PrenotazionePayloadDTO body){
         Viaggio viaggio = viaggiRepository.findById(body.viaggio_id()).orElseThrow(()-> new NotFoundException(body.viaggio_id()));
         Dipendente dipendente = dipendentiReporitory.findById(body.dipendente_id()).orElseThrow(()-> new NotFoundException(body.dipendente_id()));
+        if (prenotazioniService.esistePrenotazionePerGiornoEDipendente(dipendente.getId(), viaggio.getDataViaggio(), prenotazioneId)) {
+            throw new BadRequestException("Il dipendente ha già una prenotazione per un viaggio in questa data.");
+        }
         Prenotazione found = this.prenotazioniService.findById(prenotazioneId);
         found.setDettagli(body.dettagli());
         found.setViaggio(viaggio);

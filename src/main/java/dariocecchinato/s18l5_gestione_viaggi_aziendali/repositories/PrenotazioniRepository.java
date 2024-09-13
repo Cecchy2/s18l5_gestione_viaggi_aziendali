@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface PrenotazioniRepository extends JpaRepository<Prenotazione, UUID> {
 
     boolean existsByDipendenteIdAndViaggioDataViaggio(UUID dipendenteId, LocalDate dataViaggio);
+
+    boolean existsByDipendenteIdAndViaggioDataViaggioAndIdNot(UUID dipendenteId, LocalDate dataViaggio, UUID prenotazioneId);
 }
