@@ -5,7 +5,6 @@ import dariocecchinato.s18l5_gestione_viaggi_aziendali.entities.Dipendente;
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.exceptions.BadRequestException;
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.exceptions.NotFoundException;
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.payloads.DipendentePayloadDTO;
-import dariocecchinato.s18l5_gestione_viaggi_aziendali.payloads.DipendenteResponseDTO;
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.repositories.DipendentiReporitory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,7 +36,18 @@ public class DipendentiService {
         Dipendente newDipendente = new Dipendente(body.username(), body.nome(), body.cognome(), body.email(), avatar);
         return dipendentiReporitory.save(newDipendente);
     }
-    public Dipendente findAutoreById(UUID dipendenteId){
+    public Dipendente findDipendenteById(UUID dipendenteId){
         return this.dipendentiReporitory.findById(dipendenteId).orElseThrow(()->new NotFoundException(dipendenteId));
+    }
+
+    public Dipendente findByIdAndUpdate(UUID dipendenteId, DipendentePayloadDTO body){
+        String avatar = "https://ui-avatars.com/api/?name="+body.nome()+"+"+body.cognome();
+        Dipendente found = this.dipendentiReporitory.findById(dipendenteId).orElseThrow(()->new NotFoundException(dipendenteId));
+        found.setAvatar(avatar);
+        found.setUsername(body.username());
+        found.setNome(body.nome());
+        found.setCognome(body.cognome());
+        found.setEmail(body.email());
+        return dipendentiReporitory.save(found);
     }
 }

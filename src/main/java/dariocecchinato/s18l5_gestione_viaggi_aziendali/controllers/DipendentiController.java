@@ -38,9 +38,19 @@ public class DipendentiController {
             }
             @GetMapping("/{dipendenteId}")
     public Dipendente findById(@PathVariable UUID dipendenteId){
-                return this.dipendentiService.findAutoreById(dipendenteId);
+                return this.dipendentiService.findDipendenteById(dipendenteId);
+            }
+            @PutMapping("/{dipendenteId}")
+    public Dipendente findByIdAndUpdate(@PathVariable UUID dipendenteId,@RequestBody @Validated DipendentePayloadDTO body, BindingResult validationResult){
+                if (validationResult.hasErrors()){
+                    String message = validationResult.getAllErrors().stream().map(objectError -> objectError.getDefaultMessage()).collect(Collectors.joining(". "));
+                    throw new BadRequestException("Ci sono errore con il payload " + message);
+                }else {
+                    return this.dipendentiService.findByIdAndUpdate(dipendenteId,body);
+                }
+            }
             }
 
 
 
-}
+
