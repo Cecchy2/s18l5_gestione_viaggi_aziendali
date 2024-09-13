@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -39,19 +40,27 @@ public class ViaggiController {
         return this.viaggiService.findAll(page, size, sortby);
     }
 
-    @GetMapping("/{destinazione}/{dataViaggio}")
-    public Viaggio findByDestinazioneAndDataViaggio (@PathVariable String destinazione, @PathVariable String dataViaggio){
-        LocalDate data = LocalDate.parse(dataViaggio);
-        return  viaggiService.findByDestinationAndDate(destinazione,data);
+
+    @GetMapping("/{viaggioId}")
+    public Viaggio findById (@PathVariable UUID viaggioId){
+        return  viaggiService.findById(viaggioId);
     }
 
-    @PutMapping("/{destinazione}/{dataViaggio}")
-    public Viaggio findByDestinazioneAndDataViaggioAndUpdate (@PathVariable String destinazione, @PathVariable String dataViaggio, @RequestBody ViaggioPayloadDTO body, BindingResult validationResult){
+    @PutMapping("/{viaggioId}")
+    public Viaggio findByIdAndUpdate (@PathVariable UUID viaggioId, @RequestBody ViaggioPayloadDTO body, BindingResult validationResult){
         if (validationResult.hasErrors()){
             String message = validationResult.getAllErrors().stream().map(objectError -> objectError.getDefaultMessage()).collect(Collectors.joining(" ."));
             throw new BadRequestException("Ci sono stati errori nel payload. " + message);
     }else {
-            return this.viaggiService.save(body);
+            return this.viaggiService.findByIdAndUpdate(viaggioId,body);
         }
     }
+
+    @DeleteMapping("/{viaggioId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void findByIdAndDelete(@PathVariable UUID viaggioId) {
+        this.viaggiService.findByIdAndDelete(viaggioId);
+
+    }
+
 }
