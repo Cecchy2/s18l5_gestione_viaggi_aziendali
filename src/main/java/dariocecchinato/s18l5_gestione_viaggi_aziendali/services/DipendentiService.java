@@ -1,6 +1,7 @@
 package dariocecchinato.s18l5_gestione_viaggi_aziendali.services;
 
 import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.entities.Dipendente;
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.exceptions.BadRequestException;
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.exceptions.NotFoundException;
@@ -12,7 +13,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @Service
@@ -37,17 +40,35 @@ public class DipendentiService {
         return dipendentiReporitory.save(newDipendente);
     }
     public Dipendente findDipendenteById(UUID dipendenteId){
-        return this.dipendentiReporitory.findById(dipendenteId).orElseThrow(()->new NotFoundException(dipendenteId));
+        Dipendente found = this.dipendentiReporitory.findById(dipendenteId).orElseThrow(()->new NotFoundException(dipendenteId));
+        if (found == null)throw new NotFoundException(dipendenteId);
+        return found;
     }
 
     public Dipendente findByIdAndUpdate(UUID dipendenteId, DipendentePayloadDTO body){
         String avatar = "https://ui-avatars.com/api/?name="+body.nome()+"+"+body.cognome();
         Dipendente found = this.dipendentiReporitory.findById(dipendenteId).orElseThrow(()->new NotFoundException(dipendenteId));
+        if (found == null)throw new NotFoundException(dipendenteId);
         found.setAvatar(avatar);
         found.setUsername(body.username());
         found.setNome(body.nome());
         found.setCognome(body.cognome());
         found.setEmail(body.email());
         return dipendentiReporitory.save(found);
+    }
+    public void findByIdAndDeleteDipendente (UUID dipendenteId){
+        Dipendente found = this.dipendentiReporitory.findById(dipendenteId).orElseThrow(()->new NotFoundException(dipendenteId));
+        if (found == null)throw new NotFoundException(dipendenteId);
+        this.dipendentiReporitory.delete(found);
+    }
+
+    public String uploadImage(MultipartFile file) throws IOException {
+        String url = (String) cloudinaryUploader.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
+        System.out.println("URL " + url);
+        return url;
+    }
+
+    public Dipendente saveDipendente(Dipendente dipendente) {
+        return this.dipendentiReporitory.save(dipendente);
     }
 }

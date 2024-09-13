@@ -2,6 +2,7 @@ package dariocecchinato.s18l5_gestione_viaggi_aziendali.controllers;
 
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.entities.Dipendente;
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.exceptions.BadRequestException;
+import dariocecchinato.s18l5_gestione_viaggi_aziendali.exceptions.NotFoundException;
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.payloads.DipendentePayloadDTO;
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.payloads.DipendenteResponseDTO;
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.services.DipendentiService;
@@ -11,7 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -38,7 +41,9 @@ public class DipendentiController {
             }
             @GetMapping("/{dipendenteId}")
     public Dipendente findById(@PathVariable UUID dipendenteId){
-                return this.dipendentiService.findDipendenteById(dipendenteId);
+                Dipendente found = this.dipendentiService.findDipendenteById(dipendenteId);
+                if (found == null )throw new NotFoundException(dipendenteId);
+                return found;
             }
             @PutMapping("/{dipendenteId}")
     public Dipendente findByIdAndUpdate(@PathVariable UUID dipendenteId,@RequestBody @Validated DipendentePayloadDTO body, BindingResult validationResult){
@@ -49,7 +54,19 @@ public class DipendentiController {
                     return this.dipendentiService.findByIdAndUpdate(dipendenteId,body);
                 }
             }
+
+            @DeleteMapping("/{dipendenteId}")
+            @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void findByIdAndDelete(@PathVariable UUID dipendenteId){this.dipendentiService.findByIdAndDeleteDipendente(dipendenteId);}
+
+    @PatchMapping("/{dipendenteId}/avatar")
+    public void uploadAvatar(@PathVariable UUID dipendenteId, @RequestParam("avatar") MultipartFile image) throws IOException {
+        String avatarUrl = this.dipendentiService.uploadImage(image);
+        Dipendente dipendente = dipendentiService.findDipendenteById(dipendenteId);
+        dipendente.setAvatar(avatarUrl);
+        dipendentiService.saveDipendente(dipendente);
             }
+    }
 
 
 
