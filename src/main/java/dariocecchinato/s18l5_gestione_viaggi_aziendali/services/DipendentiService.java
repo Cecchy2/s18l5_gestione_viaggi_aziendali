@@ -3,6 +3,7 @@ package dariocecchinato.s18l5_gestione_viaggi_aziendali.services;
 import com.cloudinary.Cloudinary;
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.entities.Dipendente;
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.exceptions.BadRequestException;
+import dariocecchinato.s18l5_gestione_viaggi_aziendali.exceptions.NotFoundException;
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.payloads.DipendentePayloadDTO;
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.payloads.DipendenteResponseDTO;
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.repositories.DipendentiReporitory;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class DipendentiService {
@@ -33,5 +36,8 @@ public class DipendentiService {
         String avatar = "https://ui-avatars.com/api/?name="+body.nome()+"+"+body.cognome();
         Dipendente newDipendente = new Dipendente(body.username(), body.nome(), body.cognome(), body.email(), avatar);
         return dipendentiReporitory.save(newDipendente);
+    }
+    public Dipendente findAutoreById(UUID dipendenteId){
+        return this.dipendentiReporitory.findById(dipendenteId).orElseThrow(()->new NotFoundException(dipendenteId));
     }
 }
