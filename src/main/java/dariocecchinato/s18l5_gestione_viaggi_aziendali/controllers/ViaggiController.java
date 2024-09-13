@@ -44,4 +44,14 @@ public class ViaggiController {
         LocalDate data = LocalDate.parse(dataViaggio);
         return  viaggiService.findByDestinationAndDate(destinazione,data);
     }
+
+    @PutMapping("/{destinazione}/{dataViaggio}")
+    public Viaggio findByDestinazioneAndDataViaggioAndUpdate (@PathVariable String destinazione, @PathVariable String dataViaggio, @RequestBody ViaggioPayloadDTO body, BindingResult validationResult){
+        if (validationResult.hasErrors()){
+            String message = validationResult.getAllErrors().stream().map(objectError -> objectError.getDefaultMessage()).collect(Collectors.joining(" ."));
+            throw new BadRequestException("Ci sono stati errori nel payload. " + message);
+    }else {
+            return this.viaggiService.save(body);
+        }
+    }
 }

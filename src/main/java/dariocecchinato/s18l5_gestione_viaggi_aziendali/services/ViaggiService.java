@@ -5,6 +5,7 @@ import dariocecchinato.s18l5_gestione_viaggi_aziendali.enums.Stato_Prenotazione;
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.exceptions.BadRequestException;
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.exceptions.NotFoundExceptionViaggio;
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.payloads.ViaggioPayloadDTO;
+import dariocecchinato.s18l5_gestione_viaggi_aziendali.payloads.ViaggioResponseDTO;
 import dariocecchinato.s18l5_gestione_viaggi_aziendali.repositories.ViaggiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,5 +41,14 @@ public Page<Viaggio> findAll(int page, int size , String sortby){
     public Viaggio findByDestinationAndDate(String destinazione, LocalDate dataViaggio) {
         return this.viaggiRepository.findByDestinazioneAndDataViaggio(destinazione, dataViaggio)
                 .orElseThrow(() -> new NotFoundExceptionViaggio(destinazione, dataViaggio)); // Nome corretto e senza virgola
+    }
+
+    public Viaggio findByDestinationAndDataViaggioAndUpdate(String destinazione, LocalDate dataViaggio, ViaggioPayloadDTO body){
+    Viaggio found = this.viaggiRepository.findByDestinazioneAndDataViaggio(destinazione, dataViaggio)
+            .orElseThrow(() -> new NotFoundExceptionViaggio(destinazione, dataViaggio));
+    found.setDestinazione(body.destinazione());
+    found.setDataViaggio(body.dataViaggio());
+    found.setStatoPrenotazione(Stato_Prenotazione.valueOf(body.statoPrenotazione()));
+    return viaggiRepository.save(found);
     }
 }
