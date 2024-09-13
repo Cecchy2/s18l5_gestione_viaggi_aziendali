@@ -14,7 +14,7 @@ public class Prenotazione {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    private LocalDate data_richiesta;
+    private LocalDate dataRichiesta;
     private String dettagli;
     @ManyToOne
     @JoinColumn(name = "viaggio_id")
